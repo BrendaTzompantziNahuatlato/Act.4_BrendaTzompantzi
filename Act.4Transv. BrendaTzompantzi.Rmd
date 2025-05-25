@@ -1,0 +1,106 @@
+---
+title: "Act.4Transv.BrendaTzompantzi"
+output: pdf_document
+date: "2025-05-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(knitr)
+
+\
+# Introducción
+
+\
+El presente informe tiene como objetivo analizar las ventas de autos eléctricos entre los años 2010 y 2024. Este trabajo forma parte de un proyecto de análisis de datos desarrollado en R, donde se exploraron datos reales para detectar tendencias y patrones de comportamiento en el mercado automotriz sustentable.
+
+\
+El dataset utilizado proviene de Kaggle y contiene dos variables: `Year` (año) y `Value` (ventas registradas). A partir de esta información, se realizó una limpieza básica, análisis estadístico descriptivo y generación de visualizaciones.
+
+\
+# Exploración y limpieza de datos
+
+\
+```{r cargar-datos}
+
+data <- read.csv("salesHistoricalCars.csv")
+
+str(data)
+
+summary(data)
+
+head(data)
+
+```
+
+\
+```{r limpieza-datos}
+# Eliminar valores faltantes y asegurar tipos correctos
+
+data_clean <- data %>% filter(!is.na(value))
+
+data_clean$year <- as.numeric(data_clean$year)
+
+data_clean$value <- as.numeric(data_clean$value)
+
+str(data_clean)
+```
+
+\
+# Análisis descriptivo
+
+value_summary <- data_clean %>%
+  group_by(year) %>%
+  summarise(
+    mean_value = mean(value),
+    median_value = median(value),
+    total_value = sum(value)
+  )
+
+kable(value_summary, caption = "Resumen de ventas por año")
+
+
+
+
+\
+# Visualización y análisis
+
+## Tendencia de ventas por año
+
+ggplot(value_summary, aes(x = year, y = total_value)) +
+  geom_line(color = "steelblue", size = 1.2) +
+  geom_point(color = "darkblue") +
+  labs(title = "Tendencia de ventas de autos eléctricos (2010–2024)",
+       x = "Año", y = "Ventas Totales") +
+  theme_minimal()
+
+
+*Comentario:* La gráfica muestra un incremento constante en las ventas de autos eléctricos, destacando una aceleración significativa a partir del año 2020.
+
+
+## Distribución de valores por año (Boxplot)
+ggplot(data_clean, aes(x = as.factor(year), y = value)) +
+  geom_boxplot(fill = "lightgreen") +
+  labs(title = "Distribución de ventas por año",
+       x = "Año", y = "Ventas (value)") +
+  theme_minimal()
+
+*Comentario:* Este boxplot permite identificar la dispersión de los valores y detectar años con alta variabilidad en las cifras reportadas.
+
+\
+# Conclusiones
+
+\
+El análisis muestra un crecimiento claro en el mercado de autos eléctricos entre 2010 y 2024. La información analizada sugiere una aceleración en la adopción de este tipo de vehículos, lo cual podría atribuirse a políticas públicas, avances tecnológicos y mayor conciencia ambiental.
+
+\
+Este análisis podría ampliarse incluyendo más variables (como país, marca o segmento de mercado) para obtener hallazgos aún más específicos.
+
+\
